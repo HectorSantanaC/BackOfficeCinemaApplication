@@ -11,9 +11,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import es.dsw.daos.UserDAO;
-import es.dsw.models.User;
+import es.dsw.models.Respuesta;
+import es.dsw.models.UserModel;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -28,7 +30,7 @@ public class MainController {
 		
 		// Consultar el usuario desde la BD
 		UserDAO userDAO  = new UserDAO ();
-		User user = (User) userDAO.getUserByUsername(username);
+		UserModel user = (UserModel) userDAO.getUserByUsername(username);
 		
 		model.addAttribute("user", user);
 		
@@ -52,11 +54,20 @@ public class MainController {
 	public String login(@CookieValue(name = "cookie", required = false) String lecturaCookie, Model model) {
 		
 		if (lecturaCookie != null) {
-	        // Decodificar la cookie
-	        String fechaDecodificada = URLDecoder.decode(lecturaCookie, StandardCharsets.UTF_8);
-	        model.addAttribute("ultimoAcceso", "Fecha del último acceso: " + fechaDecodificada);
-	    }
+			// Decodificar la cookie
+			String fechaDecodificada = URLDecoder.decode(lecturaCookie, StandardCharsets.UTF_8);
+			model.addAttribute("ultimoAcceso", "Fecha del último acceso: " + fechaDecodificada);
+		}
 		
 		return "login";
+	}
+	
+	@GetMapping(value="/listarPeliculas")
+	@ResponseBody
+	public Respuesta listarPeliculas() {
+		
+		Respuesta respuesta = new Respuesta();
+		
+		return respuesta;
 	}
 }

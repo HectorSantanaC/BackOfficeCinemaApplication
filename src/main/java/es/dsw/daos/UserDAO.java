@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.dsw.connections.MySqlConnection;
-import es.dsw.models.User;
+import es.dsw.models.UserModel;
 
 public class UserDAO {
 	
@@ -16,9 +16,9 @@ public class UserDAO {
 		mySqlConnection = new MySqlConnection();
 	}
 	
-	public List<User> getAll() {
+	public List<UserModel> getAll() {
 		
-		List<User> listUsers = new ArrayList<User>();
+		List<UserModel> listUsers = new ArrayList<UserModel>();
 		mySqlConnection.open();
 		
 		if (!mySqlConnection.isError()) {
@@ -27,7 +27,7 @@ public class UserDAO {
 			try {
 				while (rs.next()) {
 					
-					User user = new User();
+					UserModel user = new UserModel();
 					
 					user.setIdUser(rs.getInt("IDUSER_USF"));
 					user.setUserName(rs.getString("USERNAME_USF"));
@@ -49,8 +49,8 @@ public class UserDAO {
 		return listUsers;
 	}
 	
-	public User getUserByUsername(String username) {
-	    User user = null;
+	public UserModel getUserByUsername(String username) {
+	    UserModel user = null;
 	    mySqlConnection.open();
 
 	    if (!mySqlConnection.isError()) {
@@ -60,7 +60,7 @@ public class UserDAO {
 	        try {
 	            if (rs.next()) {
 	            	
-	                user = new User();
+	                user = new UserModel();
 	                
 	                user.setIdUser(rs.getInt("IDUSER_USF"));
 	                user.setUserName(rs.getString("USERNAME_USF"));

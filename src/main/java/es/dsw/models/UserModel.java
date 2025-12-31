@@ -1,6 +1,6 @@
 package es.dsw.models;
 
-public class User {
+public class UserModel {
 	private int idUser;
 	private String userName;
 	private String password;
@@ -8,7 +8,7 @@ public class User {
 	private String firstSurname;
 	private String email;
 	
-	public User() {
+	public UserModel() {
 		super();
 	}
 	
@@ -49,5 +49,4 @@ public class User {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
 }

@@ -29,8 +29,7 @@ public class SecurityConfiguration {
 										.requestMatchers("/bootstrap/**", 
 														 "/img/**", 
 														 "/js/**", 
-														 "/styles/**"
-														).permitAll()
+														 "/styles/**").permitAll()
 										.requestMatchers("/admin").hasRole("admin")
 										.requestMatchers("/userweb").hasRole("userweb")
 										.requestMatchers("/commercial").hasRole("commercial")
@@ -54,7 +53,7 @@ public class SecurityConfiguration {
 		
 		inMemory = new InMemoryUserDetailsManager();
 		
-		for (es.dsw.models.User user : userDAO.getAll()) {
+		for (es.dsw.models.UserModel user : userDAO.getAll()) {
 			
 			List<String> roles = rolDAO.getRol(user.getIdUser());
 			
