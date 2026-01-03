@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import es.dsw.daos.PeliculasDAO;
 import es.dsw.daos.UserDAO;
 import es.dsw.models.Respuesta;
 import es.dsw.models.UserModel;
@@ -66,8 +67,13 @@ public class MainController {
 	@ResponseBody
 	public Respuesta listarPeliculas() {
 		
-		Respuesta respuesta = new Respuesta();
+		Respuesta respuesta = new Respuesta(null, false, null);
+		PeliculasDAO peliculasDAO = new PeliculasDAO();
 		
+		respuesta.setPeliculas(peliculasDAO.listarPeliculas()); 
+		respuesta.setError(false);
+		respuesta.setMsgError(null);
+				
 		return respuesta;
 	}
 }

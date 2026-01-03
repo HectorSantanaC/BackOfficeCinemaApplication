@@ -33,42 +33,46 @@ $(document).ready(function () {
   //Aquí debería implementar la llamada asíncrona para obtener los datos de las películas
   //y cargarlos dentro de la capa #htmlListaPeliculas
   $("body").on("click", "#IdListarPeliculas", function () {
-    // Llamada al endpoint REST que devuelve JSON
-    fetch('/api/peliculas')
-      .then(function (response) {
-        if (!response.ok) throw new Error('Error en la petición: ' + response.status);
-        return response.json();
-      })
-      .then(function (data) {
-        if (!Array.isArray(data) || data.length === 0) {
-          $("#htmlListaPeliculas").html('<p>No hay películas en el repositorio.</p>');
-          return;
-        }
-
-        var html = '<div class="table-responsive"><table class="table table-striped">';
-        html += '<thead><tr><th>Título</th><th>Sinopsis</th><th>Género</th><th>Director</th><th>Reparto</th><th>Año</th><th>Fecha estreno</th><th>Distribuidor</th><th>País</th></tr></thead>';
-        html += '<tbody>';
-
-        data.forEach(function (p) {
-          html += '<tr>' +
-            '<td>' + (p.titulo || '') + '</td>' +
-            '<td>' + (p.synopsis || '') + '</td>' +
-            '<td>' + (p.genero || '') + '</td>' +
-            '<td>' + (p.director || '') + '</td>' +
-            '<td>' + (p.reparto || '') + '</td>' +
-            '<td>' + (p.anio || '') + '</td>' +
-            '<td>' + (p.fechaEstreno || '') + '</td>' +
-            '<td>' + (p.distribuidor || '') + '</td>' +
-            '<td>' + (p.pais || '') + '</td>' +
-            '</tr>';
-        });
-
-        html += '</tbody></table></div>';
-        $("#htmlListaPeliculas").html(html);
-      })
-      .catch(function (err) {
-        console.error(err);
-        $("#htmlListaPeliculas").html('<p class="text-danger">Error al obtener las películas.</p>');
-      });
-  });
+	
+	$.ajax({
+	        url: '/listarPeliculas', 
+	        dataType: "json",
+	        method: 'GET',
+	        success: function(respuesta){
+				
+	            if (respuesta.error) {
+	                $('#htmlListaPeliculas').html('<p>Error: '+respuesta.msgError+'</p>');
+	            } else {
+	                let html = "<table class='table table-striped table-bordered'>";
+	                html += "<thead><tr>";
+	                html += "<th>Título</th><th>Synopsis</th><th>Género</th>";
+	                html += "<th>Director</th><th>Reparto</th><th>Año</th>";
+	                html += "<th>Fecha estreno</th><th>Distribuidor</th><th>País</th>";
+	                html += "</tr></thead><tbody>";
+	                
+	                respuesta.peliculas.forEach(function(pelicula) {
+	                    html += "<tr>";
+	                    html += "<td>" + pelicula.titulo + "</td>";
+	                    html += "<td>" + pelicula.synopsis + "</td>";
+	                    html += "<td>" + pelicula.genero + "</td>";
+	                    html += "<td>" + pelicula.director + "</td>";
+	                    html += "<td>" + pelicula.reparto + "</td>";
+	                    html += "<td>" + pelicula.anio + "</td>";
+	                    html += "<td>" + pelicula.fechaEstreno + "</td>";
+	                    html += "<td>" + pelicula.distribuidor + "</td>";
+	                    html += "<td>" + pelicula.pais + "</td>";
+	                    html += "</tr>";
+	                });
+	                
+	                html += "</tbody></table>";
+	                $('#htmlListaPeliculas').html(html);
+	                
+	                $("#ListarPeliculasVisual").modal("show");
+	            }
+	        },
+	        error: function(){
+	            $('#htmlListaPeliculas').html('<p>Error Fatal al cargar películas</p>');
+	        }
+		});
+	});
 });
