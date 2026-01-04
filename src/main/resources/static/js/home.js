@@ -9,70 +9,141 @@ $(function () {
 //Se sobrecarga botón de Guardar de ventana modal de Nueva Película y
 //evento onclick de Listar Películas
 $(document).ready(function () {
+	
   // Mostrar Mi Perfil al hacer click
   $("#btnMiPerfil").on("click", function (e) {
     e.preventDefault(); // evita que el anchor recargue la página
     $("#seccion01").show(); // muestra la sección Mi Perfil
   });
 
+  /* =====================================================
+     CARGAR SELECTS CUANDO SE ABRE EL MODAL NUEVA PELÍCULA
+     ===================================================== */
+  $("#NuevaPeliculaCenter").on("show.bs.modal", function () {
+    // Cargar géneros
+    $.get("/listarGeneros", function (data) {
+      let options = "<option value=''>Selecciona género</option>";
+      data.forEach(function (genero) {
+        options += "<option value='" + genero + "'>" + genero + "</option>";
+      });
+      $("#genero").html(options);
+    });
+
+    // Cargar distribuidores
+    $.get("/listarDistribuidores", function (data) {
+      let options = "<option value=''>Selecciona distribuidor</option>";
+      data.forEach(function (distribuidor) {
+        options +=
+          "<option value='" + distribuidor + "'>" + distribuidor + "</option>";
+      });
+      $("#distribuidor").html(options);
+    });
+
+    // Cargar países
+    $.get("/listarPaises", function (data) {
+      let options = "<option value=''>Selecciona país</option>";
+      data.forEach(function (pais) {
+        options += "<option value='" + pais + "'>" + pais + "</option>";
+      });
+      $("#pais").html(options);
+    });
+  });
+
+  // LIMPIAR FORMULARIO AL CERRAR MODAL
+  $("#NuevaPeliculaCenter").on("hidden.bs.modal", function () {
+    $("#formNuevaPelicula")[0].reset();
+    $("#msgError").html("");
+  });
+
   /////////////////////////////////////////////////////////////////////////////
   //Aquí deberías implementar la llamada asincrona al servidor para enviar por
   //método POST los datos de la nueva película.
-  $("body").on("click", "#GuardarPelicula", function () {
+  $("body").on("click", "#GuardarPelicula", function (e) {
     //En esta zona debería ubicarse la llamada asíncrona al servidor enviando los datos de la nueva película
+    e.preventDefault();
 
-    $("#NuevaPeliculaCenter").modal("hide"); //Se oculta la ventana modal
-    $("body").removeClass("modal-open"); //Eliminamos la clase del body para poder hacer scroll
-    $(".modal-backdrop").remove(); //eliminamos el backdrop del modal
+    // Limpiar errores previos
+    $("#msgError").html("");
+	
+	const token = $("meta[name='_csrf']").attr("content");
+	const header = $("meta[name='_csrf_header']").attr("content");
 
-    //Si se puedo guardar una nueva película entonces mostrar la lista de peliculas:
-    $("#ListarPeliculasVisual").modal("show");
+    $.ajax({
+      url: "/guardarPelicula",
+	  dataType: "json",
+      method: "POST",
+      data: {
+        titulo: $("#titulo").val(),
+        synopsis: $("#synopsis").val(),
+        genero: $("#genero").val(),
+        director: $("#director").val(),
+        reparto: $("#reparto").val(),
+        anio: $("#anio").val(),
+        fechaEstreno: $("#fechaEstreno").val(),
+        distribuidor: $("#distribuidor").val(),
+        pais: $("#pais").val(),
+      },
+	  beforeSend: request => request.setRequestHeader(header, token),
+      success: function (respuesta) {
+        if (respuesta.error) {
+          $("#msgError").html(
+            '<div class="alert alert-danger">' + respuesta.msgError + "</div>"
+          );
+        } else {
+          // Ocultar modal de creación y desencadenar la acción para listar películas.
+          $("#NuevaPeliculaCenter").one("hidden.bs.modal", function () {
+            $("#IdListarPeliculas").trigger("click");
+          });
+          $("#NuevaPeliculaCenter").modal("hide"); //Se oculta la ventana modal
+        }
+      },
+    });
   });
 
   ///////////////////////////////////////////////////////////////////////
   //Aquí debería implementar la llamada asíncrona para obtener los datos de las películas
   //y cargarlos dentro de la capa #htmlListaPeliculas
   $("body").on("click", "#IdListarPeliculas", function () {
-	
-	$.ajax({
-	        url: '/listarPeliculas', 
-	        dataType: "json",
-	        method: 'GET',
-	        success: function(respuesta){
-				
-	            if (respuesta.error) {
-	                $('#htmlListaPeliculas').html('<p>Error: '+respuesta.msgError+'</p>');
-	            } else {
-	                let html = "<table class='table table-striped table-bordered'>";
-	                html += "<thead><tr>";
-	                html += "<th>Título</th><th>Synopsis</th><th>Género</th>";
-	                html += "<th>Director</th><th>Reparto</th><th>Año</th>";
-	                html += "<th>Fecha estreno</th><th>Distribuidor</th><th>País</th>";
-	                html += "</tr></thead><tbody>";
-	                
-	                respuesta.peliculas.forEach(function(pelicula) {
-	                    html += "<tr>";
-	                    html += "<td>" + pelicula.titulo + "</td>";
-	                    html += "<td>" + pelicula.synopsis + "</td>";
-	                    html += "<td>" + pelicula.genero + "</td>";
-	                    html += "<td>" + pelicula.director + "</td>";
-	                    html += "<td>" + pelicula.reparto + "</td>";
-	                    html += "<td>" + pelicula.anio + "</td>";
-	                    html += "<td>" + pelicula.fechaEstreno + "</td>";
-	                    html += "<td>" + pelicula.distribuidor + "</td>";
-	                    html += "<td>" + pelicula.pais + "</td>";
-	                    html += "</tr>";
-	                });
-	                
-	                html += "</tbody></table>";
-	                $('#htmlListaPeliculas').html(html);
-	                
-	                $("#ListarPeliculasVisual").modal("show");
-	            }
-	        },
-	        error: function(){
-	            $('#htmlListaPeliculas').html('<p>Error Fatal al cargar películas</p>');
-	        }
-		});
-	});
+    $.ajax({
+      url: "/listarPeliculas",
+      dataType: "json",
+      method: "GET",
+      success: function (respuesta) {
+        if (respuesta.error) {
+          $("#htmlListaPeliculas").html(
+            "<p>Error: " + respuesta.msgError + "</p>"
+          );
+        } else {
+          let html = "<table class='table table-striped table-bordered'>";
+          html += "<thead><tr>";
+          html += "<th>Título</th><th>Synopsis</th><th>Género</th>";
+          html += "<th>Director</th><th>Reparto</th><th>Año</th>";
+          html += "<th>Fecha estreno</th><th>Distribuidor</th><th>País</th>";
+          html += "</tr></thead><tbody>";
+
+          respuesta.peliculas.forEach(function (pelicula) {
+            html += "<tr>";
+            html += "<td>" + pelicula.titulo + "</td>";
+            html += "<td>" + pelicula.synopsis + "</td>";
+            html += "<td>" + pelicula.genero + "</td>";
+            html += "<td>" + pelicula.director + "</td>";
+            html += "<td>" + pelicula.reparto + "</td>";
+            html += "<td>" + pelicula.anio + "</td>";
+            html += "<td>" + pelicula.fechaEstreno + "</td>";
+            html += "<td>" + pelicula.distribuidor + "</td>";
+            html += "<td>" + pelicula.pais + "</td>";
+            html += "</tr>";
+          });
+
+          html += "</tbody></table>";
+          $("#htmlListaPeliculas").html(html);
+
+          $("#ListarPeliculasVisual").modal("show");
+        }
+      },
+      error: function () {
+        $("#htmlListaPeliculas").html("<p>Error Fatal al cargar películas</p>");
+      },
+    });
+  });
 });

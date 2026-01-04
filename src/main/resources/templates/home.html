@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
   <meta charset="UTF-8">
@@ -12,6 +12,8 @@
   <script th:src="@{/bootstrap/4.3.1/js/bootstrap.bundle.min.js}"></script>
 
   <script th:src="@{/js/home.js}"></script>
+  <meta name="_csrf" th:content="${_csrf.token}" />
+  <meta name="_csrf_header" th:content="${_csrf.headerName}" />
 </head>
 
 <body>
@@ -145,14 +147,70 @@
         </div>
         <div class="modal-body">
           <!-- Aquí podrías generar el código html para representar el formulario-->
-          [Formulario de recogida de datos]
+
+          <form id="formNuevaPelicula">
+            <div class="form-row">
+              <div class="form-group col-md-8">
+                <label for="titulo">Título <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="titulo" name="titulo" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="synopsis">Synopsis</label>
+              <textarea class="form-control" id="synopsis" name="synopsis" rows="3"></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="genero">Género <span class="text-danger">*</span></label>
+                <select class="form-control" id="genero" name="genero" required></select>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="director">Director</label>
+                <input type="text" class="form-control" id="director" name="director">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="reparto">Reparto</label>
+              <textarea class="form-control" id="reparto" name="reparto" rows="3"></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group col-md-4">
+                <label for="anio">Año <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" id="anio" name="anio" required>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="fechaEstreno">Fecha de estreno</label>
+                <input type="date" class="form-control" id="fechaEstreno" name="fechaEstreno">
+              </div>
+            </div>
+
+
+
+            <div class="form-row">
+              <div class="form-group col-md-4">
+                <label for="distribuidor">Distribuidor</label>
+                <select class="form-control" id="distribuidor" name="distribuidor"></select>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="pais">País <span class="text-danger">*</span></label>
+                <select class="form-control" id="pais" name="pais" required></select>
+              </div>
+              <div class="form-group col-md-4 d-flex align-items-end">
+              </div>
+            </div>
+          </form>
+          <div id="msgError"></div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
           <button id="GuardarPelicula" type="button" class="btn btn-dark">Guardar</button>
         </div>
       </div>
-    </div>F
+    </div>
   </div>
 
   <!-- Ventana Modal en bootstrap para listar las Pelicula -->

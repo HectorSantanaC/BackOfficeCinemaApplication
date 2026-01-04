@@ -23,8 +23,9 @@ public class SecurityConfiguration {
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		
+
 		http
+			.csrf(withDefaults())
 			.authorizeHttpRequests(authorize -> authorize
 										.requestMatchers("/bootstrap/**", 
 														 "/img/**", 

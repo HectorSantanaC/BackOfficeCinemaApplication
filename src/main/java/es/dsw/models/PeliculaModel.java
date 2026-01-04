@@ -14,6 +14,20 @@ public class PeliculaModel {
   public PeliculaModel() {
 	  super();
   }
+  
+    public PeliculaModel(String titulo, String synopsis, String genero, String director, String reparto, String anio,
+		String fechaEstreno, String distribuidor, String pais) {
+	super();
+	this.titulo = titulo;
+	this.synopsis = synopsis;
+	this.genero = genero;
+	this.director = director;
+	this.reparto = reparto;
+	this.anio = anio;
+	this.fechaEstreno = fechaEstreno;
+	this.distribuidor = distribuidor;
+	this.pais = pais;
+}
 
   public String getTitulo() {
     return titulo;

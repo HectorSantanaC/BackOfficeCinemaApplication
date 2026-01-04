@@ -2,16 +2,16 @@ package es.dsw.models;
 
 import java.util.List;
 
-public class Respuesta {
+public class RespuestaListarPeliculas {
     private List<PeliculaModel> peliculas;
     private boolean error;
     private String msgError;
 
-    public Respuesta() {
+    public RespuestaListarPeliculas() {
 		super();
 	}
 
-	public Respuesta(List<PeliculaModel> peliculas, boolean error, String msgError) {
+	public RespuestaListarPeliculas(List<PeliculaModel> peliculas, boolean error, String msgError) {
         this.peliculas = peliculas;
         this.error = error;
         this.msgError = msgError;
